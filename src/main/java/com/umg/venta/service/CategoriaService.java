@@ -1,7 +1,6 @@
 package com.umg.venta.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.umg.venta.repository.CategoriaRepository;
 import com.umg.venta.dto.CategoriaDTO;
 import com.umg.venta.entity.Categoria;
@@ -12,8 +11,12 @@ import java.util.stream.Collectors;
 @Service
 public class CategoriaService {
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    private final CategoriaRepository categoriaRepository;
+
+    // Inyección por constructor (recomendada por Spring)
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
+    }
 
     public List<CategoriaDTO> findAll() {
         return categoriaRepository.findAll()
@@ -38,9 +41,8 @@ public class CategoriaService {
     public CategoriaDTO anularCategoria(Integer idCategoria) {
         Categoria categoria = categoriaRepository.findById(idCategoria)
                 .orElseThrow(() -> new RuntimeException("La categoria no existe con id " + idCategoria));
-        CategoriaDTO categoriaDTO = new CategoriaDTO();
-        categoriaDTO.setEstado(false);
-        categoria.setEstado(categoriaDTO.getEstado());
+
+        categoria.setEstado(false); // Simplificado sin DTO intermedio
 
         Categoria savedCategoria = categoriaRepository.save(categoria);
         return convertToDTO(savedCategoria);
@@ -52,6 +54,9 @@ public class CategoriaService {
 
         categoria.setNombre(categoriaDTO.getNombre());
         categoria.setDescripcion(categoriaDTO.getDescripcion());
+        if (categoriaDTO.getEstado() != null) {
+            categoria.setEstado(categoriaDTO.getEstado()); // Actualiza estado si viene en el JSON
+        }
 
         Categoria savedCategoria = categoriaRepository.save(categoria);
         return convertToDTO(savedCategoria);
@@ -70,7 +75,8 @@ public class CategoriaService {
         Categoria categoria = new Categoria();
         categoria.setNombre(dto.getNombre());
         categoria.setDescripcion(dto.getDescripcion());
-        categoria.setEstado(true);
+        // Si viene estado en el DTO se respeta, si no, por defecto true
+        categoria.setEstado(dto.getEstado() != null ? dto.getEstado() : true);
         return categoria;
     }
 }

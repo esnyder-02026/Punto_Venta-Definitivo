@@ -3,7 +3,9 @@ package com.umg.venta.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.umg.venta.dto.ProductoDTO;
 import com.umg.venta.entity.Producto;
@@ -29,6 +31,35 @@ public class ProductoService {
         Producto producto = convertToEntity(dto);
         Producto productoGuardado = productoRepository.save(producto);
         return convertToDTO(productoGuardado);
+    }
+
+    public ProductoDTO actualizar(Integer idProducto, ProductoDTO dto) {
+        Producto productoExistente = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+
+        if (dto.getNombre() != null) {
+            productoExistente.setNombre(dto.getNombre());
+        }
+        if (dto.getDescripcion() != null) {
+            productoExistente.setDescripcion(dto.getDescripcion());
+        }
+        if (dto.getPrecio() != null) {
+            productoExistente.setPrecio(dto.getPrecio());
+        }
+        if (dto.getStock() != null) {
+            productoExistente.setStock(dto.getStock());
+        }
+
+        return convertToDTO(productoRepository.save(productoExistente));
+    }
+
+    public ProductoDTO anular(Integer idProducto, ProductoDTO dto) {
+        Producto productoExistente = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+
+        // En caso de manejar estado lógico, de lo contrario desactiva stock a 0 o asigna bandera
+        productoExistente.setStock(0);
+        return convertToDTO(productoRepository.save(productoExistente));
     }
 
     private ProductoDTO convertToDTO(Producto c) {
