@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.umg.venta.dto.MessageResponse;
@@ -34,6 +35,24 @@ public class PedidoDetalleController {
         return pedidoDetalleService.listarTodos();
     }
 
+    // --- Endpoints agregados Filtros y Búsquedas ---
+    @GetMapping("/mostrarPorPedido")
+    public List<PedidoDetalleDTO> mostrarPorPedido(@RequestParam Integer idPedido) {
+        return pedidoDetalleService.mostrarPorPedido(idPedido);
+    }
+
+    @GetMapping("/mostrarPorPedidoYProducto")
+    public List<PedidoDetalleDTO> mostrarPorPedidoYProducto(@RequestParam Integer idPedido,
+                                                           @RequestParam String nombreProducto) {
+        return pedidoDetalleService.mostrarPorPedidoYProducto(idPedido, nombreProducto);
+    }
+
+    @GetMapping("/mostrarPorPedidoYProductoTop")
+    public List<PedidoDetalleDTO> mostrarPorPedidoYProductoTop2(@RequestParam Integer idPedido,
+                                                               @RequestParam String nombreProducto) {
+        return pedidoDetalleService.mostrarPorPedidoYProductoTop2(idPedido, nombreProducto);
+    }
+
     @PostMapping
     public ResponseEntity<PedidoDetalleDTO> crear(@RequestBody PedidoDetalleDTO dto) {
         PedidoDetalleDTO nuevoDetalle = pedidoDetalleService.guardar(dto);
@@ -42,7 +61,7 @@ public class PedidoDetalleController {
 
     @PutMapping("/{idDetalle}")
     public ResponseEntity<MessageResponse> actualizar(@PathVariable Integer idDetalle,
-                                                      @RequestBody PedidoDetalleDTO dto) {
+                                                     @RequestBody PedidoDetalleDTO dto) {
         try {
             pedidoDetalleService.actualizar(idDetalle, dto);
             return ResponseEntity.ok(new MessageResponse("Detalle de pedido actualizado con éxito"));

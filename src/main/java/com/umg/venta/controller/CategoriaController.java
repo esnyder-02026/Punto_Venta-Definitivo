@@ -20,19 +20,33 @@ public class CategoriaController {
         return categoriaService.findAll();
     }
 
+    // --- Endpoints agregados Filtros y Búsquedas ---
+    @GetMapping("/mostrarActivos")
+    public List<CategoriaDTO> mostrarActivos() {
+        return categoriaService.mostrarActivos();
+    }
+
+    @GetMapping("/mostrarActivosFiltro")
+    public List<CategoriaDTO> mostrarActivosFiltro(@RequestParam String nombre) {
+        return categoriaService.mostrarActivosFiltro(nombre);
+    }
+
+    @GetMapping("/mostrarActivosFiltroTop")
+    public List<CategoriaDTO> mostrarActivosFiltroTop2(@RequestParam String nombre) {
+        return categoriaService.mostrarActivosFiltroTop2(nombre);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoriaDTO createCategoria(@RequestBody CategoriaDTO categoriaDTO) {
         return categoriaService.save(categoriaDTO);
     }
 
-    // Estándar REST: PUT /categorias/{id} para modificar el recurso
     @PutMapping("/{id}")
     public CategoriaDTO modificarCategoria(@PathVariable Integer id, @RequestBody CategoriaDTO categoriaDTO) {
         return categoriaService.modificarCategoria(id, categoriaDTO);
     }
 
-    // Ruta específica para la lógica de negocio de anulación
     @PutMapping("/anular/{id}")
     public CategoriaDTO anularCategoria(@PathVariable Integer id) {
         return categoriaService.anularCategoria(id);

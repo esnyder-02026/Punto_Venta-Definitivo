@@ -27,6 +27,28 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
+    // --- Métodos agregados Filtros y Búsquedas ---
+    public List<ClienteDTO> mostrarActivos() {
+        return clienteRepository.findByEstadoTrue()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ClienteDTO> mostrarActivosFiltro(String nombre) {
+        return clienteRepository.findByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ClienteDTO> mostrarActivosFiltroTop2(String nombre) {
+        return clienteRepository.findTop2ByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public ClienteDTO crear(ClienteDTO dto) {
         boolean duplicado = clienteRepository
                 .existsByNombreIgnoreCaseAndApellidoIgnoreCase(dto.getNombre(),

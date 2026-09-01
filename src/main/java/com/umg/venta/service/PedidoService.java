@@ -43,6 +43,28 @@ public class PedidoService {
                 .collect(Collectors.toList());
     }
 
+    // --- Métodos de Filtros y Búsquedas ---
+    public List<PedidoDTO> mostrarActivos(Boolean estado) {
+        return pedidoRepository.findByEstado(estado)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PedidoDTO> mostrarActivosFiltro(Boolean estado, String nombreCliente) {
+        return pedidoRepository.findByEstadoAndIdCliente_NombreContainingIgnoreCase(estado, nombreCliente)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PedidoDTO> mostrarActivosFiltroTop2(Boolean estado, String nombreCliente) {
+        return pedidoRepository.findTop2ByEstadoAndIdCliente_NombreContainingIgnoreCase(estado, nombreCliente)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public PedidoDTO guardarPedido(PedidoDTO dto) {
         Pedido pedido = new Pedido();

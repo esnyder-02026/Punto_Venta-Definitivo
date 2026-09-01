@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.umg.venta.dto.MessageResponse;
@@ -35,6 +36,22 @@ public class ProductoController {
     @GetMapping
     public List<ProductoDTO> listarTodos() {
         return productoService.listarProductos();
+    }
+
+    // --- Endpoints agregados Filtros y Búsquedas ---
+    @GetMapping("/mostrarActivos")
+    public List<ProductoDTO> mostrarActivos() {
+        return productoService.mostrarActivos();
+    }
+
+    @GetMapping("/mostrarActivosFiltro")
+    public List<ProductoDTO> mostrarActivosFiltro(@RequestParam String nombre) {
+        return productoService.mostrarActivosFiltro(nombre);
+    }
+
+    @GetMapping("/mostrarActivosFiltroTop")
+    public List<ProductoDTO> mostrarActivosFiltroTop2(@RequestParam String nombre) {
+        return productoService.mostrarActivosFiltroTop2(nombre);
     }
 
     @PostMapping

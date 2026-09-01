@@ -13,13 +13,34 @@ public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
 
-    // Inyección por constructor (recomendada por Spring)
     public CategoriaService(CategoriaRepository categoriaRepository) {
         this.categoriaRepository = categoriaRepository;
     }
 
     public List<CategoriaDTO> findAll() {
         return categoriaRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // --- Métodos agregados Filtros y Búsquedas ---
+    public List<CategoriaDTO> mostrarActivos() {
+        return categoriaRepository.findByEstadoTrue()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<CategoriaDTO> mostrarActivosFiltro(String nombre) {
+        return categoriaRepository.findByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<CategoriaDTO> mostrarActivosFiltroTop2(String nombre) {
+        return categoriaRepository.findTop2ByEstadoTrueAndNombreContainingIgnoreCase(nombre)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -42,7 +63,7 @@ public class CategoriaService {
         Categoria categoria = categoriaRepository.findById(idCategoria)
                 .orElseThrow(() -> new RuntimeException("La categoria no existe con id " + idCategoria));
 
-        categoria.setEstado(false); // Simplificado sin DTO intermedio
+        categoria.setEstado(false);
 
         Categoria savedCategoria = categoriaRepository.save(categoria);
         return convertToDTO(savedCategoria);
@@ -55,7 +76,7 @@ public class CategoriaService {
         categoria.setNombre(categoriaDTO.getNombre());
         categoria.setDescripcion(categoriaDTO.getDescripcion());
         if (categoriaDTO.getEstado() != null) {
-            categoria.setEstado(categoriaDTO.getEstado()); // Actualiza estado si viene en el JSON
+            categoria.setEstado(categoriaDTO.getEstado());
         }
 
         Categoria savedCategoria = categoriaRepository.save(categoria);
@@ -75,7 +96,6 @@ public class CategoriaService {
         Categoria categoria = new Categoria();
         categoria.setNombre(dto.getNombre());
         categoria.setDescripcion(dto.getDescripcion());
-        // Si viene estado en el DTO se respeta, si no, por defecto true
         categoria.setEstado(dto.getEstado() != null ? dto.getEstado() : true);
         return categoria;
     }

@@ -34,6 +34,28 @@ public class PedidoDetalleService {
                 .collect(Collectors.toList());
     }
 
+    // --- Métodos agregados Filtros y Búsquedas ---
+    public List<PedidoDetalleDTO> mostrarPorPedido(Integer idPedido) {
+        return pedidoDetalleRepository.findByIdPedido_IdPedido(idPedido)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PedidoDetalleDTO> mostrarPorPedidoYProducto(Integer idPedido, String nombreProducto) {
+        return pedidoDetalleRepository.findByIdPedido_IdPedidoAndIdProducto_NombreContainingIgnoreCase(idPedido, nombreProducto)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PedidoDetalleDTO> mostrarPorPedidoYProductoTop2(Integer idPedido, String nombreProducto) {
+        return pedidoDetalleRepository.findTop2ByIdPedido_IdPedidoAndIdProducto_NombreContainingIgnoreCase(idPedido, nombreProducto)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public PedidoDetalleDTO guardar(PedidoDetalleDTO dto) {
         PedidoDetalle detalle = new PedidoDetalle();

@@ -27,6 +27,28 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
+    // --- Métodos agregados Filtros y Búsquedas ---
+    public List<ProductoDTO> mostrarActivos() {
+        return productoRepository.findByEstadoTrue()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoDTO> mostrarActivosFiltro(String nombre) {
+        return productoRepository.findByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoDTO> mostrarActivosFiltroTop2(String nombre) {
+        return productoRepository.findTop2ByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public ProductoDTO guardarProducto(ProductoDTO dto) {
         Producto producto = convertToEntity(dto);
         Producto productoGuardado = productoRepository.save(producto);
@@ -57,7 +79,6 @@ public class ProductoService {
         Producto productoExistente = productoRepository.findById(idProducto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
-        // En caso de manejar estado lógico, de lo contrario desactiva stock a 0 o asigna bandera
         productoExistente.setStock(0);
         return convertToDTO(productoRepository.save(productoExistente));
     }

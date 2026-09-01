@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.umg.venta.dto.MessageResponse;
@@ -32,6 +33,24 @@ public class PedidoController {
     @GetMapping
     public List<PedidoDTO> listarTodos() {
         return pedidoService.listarPedidos();
+    }
+
+    // --- Endpoints de Filtros y Búsquedas ---
+    @GetMapping("/mostrarActivos")
+    public List<PedidoDTO> mostrarActivos(@RequestParam(defaultValue = "true") Boolean estado) {
+        return pedidoService.mostrarActivos(estado);
+    }
+
+    @GetMapping("/mostrarActivosFiltro")
+    public List<PedidoDTO> mostrarActivosFiltro(@RequestParam(defaultValue = "true") Boolean estado,
+                                                @RequestParam String nombreCliente) {
+        return pedidoService.mostrarActivosFiltro(estado, nombreCliente);
+    }
+
+    @GetMapping("/mostrarActivosFiltroTop")
+    public List<PedidoDTO> mostrarActivosFiltroTop2(@RequestParam(defaultValue = "true") Boolean estado,
+                                                   @RequestParam String nombreCliente) {
+        return pedidoService.mostrarActivosFiltroTop2(estado, nombreCliente);
     }
 
     @PostMapping
