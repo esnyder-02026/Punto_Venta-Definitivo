@@ -51,6 +51,10 @@ public class ProductoService {
 
     public ProductoDTO guardarProducto(ProductoDTO dto) {
         Producto producto = convertToEntity(dto);
+        // Si no viene definido el estado, se asigna activo por defecto
+        if (producto.getEstado() == null) {
+            producto.setEstado(true);
+        }
         Producto productoGuardado = productoRepository.save(producto);
         return convertToDTO(productoGuardado);
     }
@@ -71,6 +75,9 @@ public class ProductoService {
         if (dto.getStock() != null) {
             productoExistente.setStock(dto.getStock());
         }
+        if (dto.getEstado() != null) {
+            productoExistente.setEstado(dto.getEstado());
+        }
 
         return convertToDTO(productoRepository.save(productoExistente));
     }
@@ -80,12 +87,14 @@ public class ProductoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
         productoExistente.setStock(0);
+        productoExistente.setEstado(false); // Marca el registro como inactivo en la base de datos
         return convertToDTO(productoRepository.save(productoExistente));
     }
 
     private ProductoDTO convertToDTO(Producto c) {
         ProductoDTO dto = new ProductoDTO();
         dto.setIdProducto(c.getIdProducto());
+        dto.setEstado(c.getEstado()); // Mapea el estado al DTO
         dto.setNombre(c.getNombre());
         dto.setDescripcion(c.getDescripcion());
         dto.setPrecio(c.getPrecio());
@@ -96,6 +105,7 @@ public class ProductoService {
     private Producto convertToEntity(ProductoDTO dto) {
         Producto producto = new Producto();
         producto.setIdProducto(dto.getIdProducto());
+        producto.setEstado(dto.getEstado()); // Asigna el estado a la entidad
         producto.setNombre(dto.getNombre());
         producto.setDescripcion(dto.getDescripcion());
         producto.setPrecio(dto.getPrecio());
